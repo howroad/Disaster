@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.project.dao.IMedicineDao">
+  		<select id="findPageBean" parameterType="HashMap" resultMap="map">
+  			select med_id,med_name,med_disaster,med_type,med_use,med_stock from t_medicine
+  			<where>
+  				<if test="medName!=null and medName!=''">
+					med_name LIKE "%"#{medName}"%"
+				</if>
+				<if test="medDisaster!=null and medDisaster!=0">
+					and med_disaster = #{medDisaster}
+				</if>
+				<if test="medType!=null and medType!=0">
+					and med_type = #{medType}
+				</if>
+  			</where>
+  			limit #{pageNo},#{pageSize};
+  		</select>
+  		
+  		<resultMap id="map" type="MedicineBean">
+  			<id property="medId" column="med_id" ></id>
+  			<result property="medName" column="med_name"></result>
+  			<result property="medDisaster" column="med_disaster"></result>
+  			<result property="medType" column="med_type"></result>
+  			<result property="medUse" column="med_use"></result>
+  			<result property="medStock" column="med_stock"></result>
+  		</resultMap>
+  		
+  		<insert id="add" parameterType="MedicineBean" useGeneratedKeys="true" keyProperty="">
+  				insert into t_medicine(med_name,med_disaster,med_type,med_use,med_stock) values(#{medName},#{medDisaster},#{medType},#{medUse},#{medStock});
+  		</insert>
+  		
+  		<select id="totalPage" parameterType="HashMap" resultType="int">
+  			select count(*) from t_medicine
+  			<where>
+  				<if test="medName!=null and medName!=''">
+					med_name LIKE "%"#{medName}"%"
+				</if>
+				<if test="medDisaster!=null and medDisaster!=0">
+					and med_disaster = #{medDisaster}
+				</if>
+				<if test="medType!=null and medType!=0">
+					and med_type = #{medType}
+				</if>
+  			</where>
+  		</select>
+  		<select id="findMedById" parameterType="int" resultMap="map">
+  			select * from t_medicine where med_id = #{medId}
+  		</select>
+  </mapper>
+  

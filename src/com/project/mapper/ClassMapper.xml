@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.IClassDao">
+
+	<select id="findList" parameterType="hashMap" resultMap="ClassMap">
+		SELECT cls_id,cls_name,cls_person,cls_tel,area_name
+		FROM t_class LEFT JOIN t_area ON t_class.cls_area_id = t_area.area_id
+		<where>
+		<if test="clsName!=null and clsName!=''">
+			cls_name LIKE "%"#{clsName}"%"
+		</if>
+		<if test="areaName!=null and areaName!=''">
+			and area_name LIKE "%"#{areaName}"%"
+		</if>
+		</where>
+		LIMIT #{start},#{size}
+	</select>
+	
+	<select id="countList" parameterType="hashMap" resultType="int">
+		SELECT count(cls_id)
+		FROM t_class LEFT JOIN t_area ON t_class.cls_area_id = t_area.area_id
+		<where>
+		<if test="clsName!=null and clsName!=''">
+			cls_name LIKE "%"#{clsName}"%"
+		</if>
+		<if test="areaName!=null and areaName!=''">
+			and area_name LIKE "%"#{areaName}"%"
+		</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="ClassBean" useGeneratedKeys="true" keyProperty="clsId">
+		INSERT INTO t_class(cls_name,cls_person,cls_tel,cls_pnum,cls_date,cls_area_id) 
+		VALUES (#{clsName},#{clsPerson},#{clsTel},#{clsPNum},now(),#{clsArea.areaId})
+	</insert>
+	
+	<select id="findClassById" parameterType="int" resultMap="ClassMap">
+		SELECT cls_id,cls_name,cls_person,cls_tel,cls_pnum,cls_date,area_id,area_name,area_forest,area_adv,area_land
+		FROM t_class LEFT JOIN t_area ON t_class.cls_area_id = t_area.area_id
+		WHERE cls_id = #{clsId}
+		LIMIT 1
+	</select>
+	
+	<update id="update" parameterType="ClassBean">
+		update t_class set cls_person = #{clsPerson},cls_tel= #{clsTel}
+		WHERE cls_id = #{clsId}
+	</update>
+	
+	<select id="findAllClass" resultMap="ClassMap">
+		SELECT cls_id,cls_name
+		FROM t_class
+	</select>
+	
+	<select id="findClassByAreaId" parameterType="int" resultMap="ClassMap">
+		SELECT cls_id,cls_name
+		FROM t_class WHERE cls_area_id = #{areaId}
+	</select>
+	
+	<resultMap type="ClassBean" id="ClassMap">
+		<id property="clsId" column="cls_id"></id>
+		<id property="clsName" column="cls_name"></id>
+		<id property="clsPerson" column="cls_person"></id>
+		<id property="clsTel" column="cls_tel"></id>
+		<id property="clsPNum" column="cls_pnum"></id>
+		<id property="clsDate" column="cls_date"></id>
+		<association property="clsArea" javaType="AreaBean">
+			<id property="areaId" column="area_id"></id>
+			<result property="areaName" column="area_name"></result>
+			<result property="areaForest" column="area_forest"></result>
+			<result property="areaAdv" column="area_adv"></result>
+			<result property="areaLand" column="area_land"></result>
+		</association>
+	</resultMap>
+</mapper>

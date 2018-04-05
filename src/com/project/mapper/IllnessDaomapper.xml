@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.project.dao.IIllnessDao">
+  
+  <insert id="addIllness" parameterType="IllnessBean">
+  INSERT INTO t_illness (ill_id,ill_name,ill_cause,ill_status,ill_law,ill_pic,ill_cure,ill_harm)VALUES 
+  (null,#{illName},#{illCause},#{illStatus},#{illLaw},#{illPic},#{illCure},#{illHarm});
+  </insert>
+  
+  <select id="findIllnessById" parameterType="int" resultMap="Illnessmap">
+  SELECT ill_id,ill_name,ill_pic,ill_cause,ill_status,ill_law,ill_cure,ill_harm FROM t_illness  
+  WHERE ill_id=#{illId};
+  </select>
+  <resultMap type="IllnessBean" id="Illnessmap">
+	  <id property="illId" column="ill_id"/>
+	  <result property="illName" column="ill_name"/>
+	  <result property="illCause" column="ill_cause"/>
+	  <result property="illPic" column="ill_pic"/>
+	  <result property="illStatus" column="ill_status"/>
+	  <result property="illLaw" column="ill_law"/>
+	  <result property="illCure" column="ill_cure"/>
+	  <result property="illHarm" column="ill_harm"/>
+  </resultMap>
+  <select id="findPageBean" parameterType="hashmap" resultMap="Illnessmap">
+    select ill_id,ill_name,ill_harm,ill_law from t_illness where ill_name like "%"#{illName}"%" and
+    ill_status like "%"#{illStatus}"%" limit #{pageNo},#{pageSize};
+  </select>
+  <select id="findCount" parameterType="hashmap" resultType="int">
+    SELECT COUNT(0) FROM t_illness where ill_name like "%"#{illName}"%" and
+    ill_status like "%"#{illStatus}"%"
+  </select>
+  
+</mapper>

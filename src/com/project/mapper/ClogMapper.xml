@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.IConsultationLogDao">
+	<resultMap type="ConsultationLogBean" id="ClogMap">
+		<id property="clogId" column="clog_id"/>
+		<result property="clogDate" column="clog_date"/>
+		<result property="clogResult" column="clog_result"/>
+		<result property="expNames" column="exp_names"/>
+	</resultMap>
+	<select id="findAllByPage" resultMap="ClogMap">
+		SELECT clog.*,GROUP_CONCAT(exp_name) as exp_names 
+		FROM (SELECT clog_id,clog_date,clog_result FROM t_consultation_log WHERE clog_dlog_id=#{dlogId}) as clog
+		JOIN t_consultation_detal ON clog_id=cdtl_clog_id 
+		JOIN t_expert ON exp_id=cdtl_exp_id GROUP BY clog_id LIMIT #{start},#{size}
+	</select>
+	<select id="findCount" parameterType="int" resultType="int">
+		SELECT COUNT(0) FROM t_consultation_log WHERE clog_dlog_id=#{id}
+	</select>
+	<insert id="add" useGeneratedKeys="true" keyProperty="clogId" parameterType="ConsultationLogBean">
+		INSERT INTO t_consultation_log VALUES(null,now(),#{clogResult},#{dlog.dlogId})
+	</insert>
+</mapper>

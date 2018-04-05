@@ -1,0 +1,41 @@
+@font-face {
+    font-family: 'Microsoft Yahei';
+    src: url("../fonts/msyh.ttc");
+}
+#experts_see{
+    text-align: center;
+    font-size: 24px;
+    font-family: 'Microsoft Yahei';
+}
+#inputwork3{
+    width: 170px;
+}
+#inputspeciality3{
+    width: 140px;
+}
+#inputname3{
+    width: 140px;
+}
+.form-group{
+    width: 180px;
+    float: right;
+}
+.pagination{
+    position: relative;
+    left: 10%;
+}
+.btn-default{
+    width: 110px;
+}
+#button_group{
+    position: relative;
+    left: 60%;
+    top: -56px;
+}
+
+.table-bordered th{
+    background-color: #cccccc;
+}
+.table-bordered td{
+    height: 36.8px;
+}

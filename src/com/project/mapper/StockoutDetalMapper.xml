@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    <mapper namespace="com.project.dao.IStockoutDetalDao">
+  		<select id="fingpageBean" parameterType="StockoutLogBean" resultMap="map">
+  			select med_name,med_type,med_disaster,sdtl_num from t_stockout_detal as s
+			JOIN t_medicine as m ON m.med_id=s.sdtl_med_id
+			where s.sdtl_slog_id = #{slogId}
+  		</select>
+  		<insert id="add" parameterType="StockoutLogBean" useGeneratedKeys="true" keyProperty="slogId">
+  			INSERT INTO t_stockout_detal(sdtl_num,sdtl_med_id,sdtl_slog_id) VALUES
+  			<foreach item="item" index="index" collection="list" separator=",">
+			(#{item.sdtlNum},#{item.sdtlMed.medId},#{item.sdtlSlog.slogId})
+			</foreach>
+  		</insert>
+  		<resultMap id="map" type="StockoutDetalBean">
+  			<id column="sdtl_id" property="sdtlId"></id>
+  			<result column="sdtl_num" property="sdtlNum"></result>
+  			<association property="sdtlMed" javaType="MedicineBean">
+  				<id property="medId" column="med_id"/>
+  				<result column="med_name" property="medName"/>
+  				<result column="med_type" property="medType"/>
+  				<result column="med_disaster" property="medDisaster"/>
+  			</association>
+  		</resultMap>
+  </mapper>

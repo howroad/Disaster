@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.IAreaDao">
+
+	<select id="findList" parameterType="hashMap" resultMap="AreaMap">
+		SELECT area_id,area_name,area_forest,area_adv,area_land,cls_name 
+		FROM t_area LEFT JOIN t_class ON t_area.area_id=t_class.cls_area_id
+		<where>
+		<if test="areaName!=null and areaName!=''">
+			area_name LIKE "%"#{areaName}"%"
+		</if>
+		<if test="areaForest!=null and areaForest!=''">
+			and area_forest LIKE "%"#{areaForest}"%"
+		</if>
+		<if test="clsName!=null and clsName!=''">
+			and cls_name LIKE "%"#{clsName}"%"
+		</if>
+		</where>
+		LIMIT #{start},#{size}
+	</select>
+	
+	<select id="countList" parameterType="hashMap" resultType="int">
+		SELECT count(area_id) 
+		FROM t_area LEFT JOIN t_class ON t_area.area_id=t_class.cls_area_id
+		<where>
+		<if test="areaName!=null and areaName!=''">
+			area_name LIKE "%"#{areaName}"%"
+		</if>
+		<if test="areaForest!=null and areaForest!=''">
+			and area_forest LIKE "%"#{areaForest}"%"
+		</if>
+		<if test="clsName!=null and clsName!=''">
+			and cls_name LIKE "%"#{clsName}"%"
+		</if>
+		</where>	
+	</select>
+	
+	<select id="findAreaNoClass" resultMap="AreaMap">
+		SELECT area_id,area_name
+		FROM t_area LEFT JOIN t_class ON t_area.area_id = t_class.cls_area_id 
+		WHERE cls_id is null
+	</select>
+	
+	<select id="findAllArea" resultMap="AreaMap">
+		SELECT area_id,area_name,cls_name
+		FROM t_area LEFT JOIN t_class ON t_area.area_id = t_class.cls_area_id
+	</select>
+	
+	<insert id="add" parameterType="AreaBean" useGeneratedKeys="true" keyProperty="areaId">
+		INSERT INTO t_area(area_name,area_forest,area_adv,area_land) VALUES(#{areaName},#{areaForest},#{areaAdv},#{areaLand});
+	</insert>
+	
+	<select id="findAreaById" parameterType="int" resultMap="AreaMap">
+		SELECT area_id,area_name,area_forest,area_adv,area_land,cls_id,cls_name 
+		FROM t_area LEFT JOIN t_class ON t_area.area_id=t_class.cls_area_id
+		WHERE area_id =#{areaId}
+		LIMIT 1
+	</select>
+	
+	<resultMap type="AreaBean" id="AreaMap">
+		<id property="areaId" column="area_id"></id>
+		<result property="areaName" column="area_name"></result>
+		<result property="areaForest" column="area_forest"></result>
+		<result property="areaAdv" column="area_adv"></result>
+		<result property="areaLand" column="area_land"></result>
+		<association property="areaClass" javaType="ClassBean">
+			<id property="clsId" column="cls_id"></id>
+			<result property="clsName" column="cls_name"></result>
+		</association>
+	</resultMap>
+</mapper>

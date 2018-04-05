@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.IConsultationDetalDao">
+	<insert id="add" parameterType="list">
+		INSERT INTO t_consultation_detal(cdtl_exp_id,cdtl_clog_id) VALUES
+		<foreach item="item" index="index" collection="list" separator=",">
+		(#{item.cdtlExp.expId},#{item.cdtlClog.clogId})
+		</foreach>
+	</insert>
+</mapper>

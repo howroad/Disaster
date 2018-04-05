@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+   <mapper namespace="com.project.dao.IStockoutDao">
+  		<select id="findPageBean" resultMap="map" parameterType="hashmap">
+  			select slog_id,slog_date,c.cls_name,u.user_rname from t_stockout_log
+			JOIN t_class AS c ON slog_cls_id=c.cls_id
+			JOIN t_user AS u ON slog_user_id=u.user_id
+			<where>
+				<if test="startDate!=null and startDate!=''">
+					slog_date &gt;= #{startDate}
+				</if>
+				<if test="overDate!=null and overDate!=''">
+					AND slog_date &lt;= #{overDate}
+				</if>
+				<if test="clsName!=null and clsName!=''">
+					AND c.cls_name like "%"#{clsName}"%"
+				</if>
+			</where>
+			LIMIT #{pageNo},#{pageSize}
+  		</select>
+  		
+  		<select id="totalPage" parameterType="hashmap" resultType="int">
+  			select COUNT(0) from t_stockout_log
+			JOIN t_class AS c ON slog_cls_id=c.cls_id
+			JOIN t_user AS u ON slog_user_id=u.user_id
+			<where>
+				<if test="startDate!=null and startDate!=''">
+					slog_date &gt;= #{startDate}
+				</if>
+				<if test="overDate!=null and overDate!=''">
+					AND slog_date &lt;= #{overDate}
+				</if>
+				<if test="clsName!=null and clsName!=''">
+					AND c.cls_name like "%"#{clsName}"%"
+				</if>
+			</where>
+  		</select>
+  		
+  		<select id="findStockoutById" parameterType="int" resultMap="map">
+  			select slog_id,slog_date,c.cls_name,u.user_rname from t_stockout_log
+			JOIN t_class AS c ON slog_cls_id=c.cls_id
+			JOIN t_user AS u ON slog_user_id=u.user_id WHERE slog_id=#{id}
+  		</select>
+  		
+  		<insert id="add" parameterType="StockoutLogBean" useGeneratedKeys="true" keyProperty="slogId">
+  			INSERT into t_stockout_log(slog_date,slog_cls_id,slog_user_id) VALUES(now(),#{slogClass.clsId},#{slogUser.userId})
+  		</insert>
+  		
+  		<resultMap id="map" type="StockoutLogBean">
+  			<id column="slog_id" property="slogId"></id>
+  			<result column="slog_date" property="slogDate"></result>
+  			<association property="slogClass" javaType="ClassBean">
+  				<id column="cls_id" property="clsId"/>
+  				<result column="cls_name" property="clsName"/>
+  			</association>
+  			<association property="slogUser" javaType="UserBean">
+  				<id column="user_id" property="userId"/>
+  				<result column="user_rname" property="userRName"/>
+  			</association>
+  			<collection property="sdtlList" ofType="StockoutDetalBean" select="com.project.dao.IStockoutDetalDao.fingpageBean" column="slog_id"></collection>
+  		</resultMap>
+  </mapper>

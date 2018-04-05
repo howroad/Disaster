@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.IExpertDao">
+	<resultMap type="ExpertBean" id="ExpertMap">
+		<id property="expId" column="exp_id"/>
+		<result property="expName" column="exp_name"/>
+		<result property="expGender" column="exp_gender"/>
+		<result property="expBirth" column="exp_birth"/>
+		<result property="expPic" column="exp_pic"/>
+		<result property="expSpecial" column="exp_special"/>
+		<result property="expOffice" column="exp_office"/>
+		<result property="expTel" column="exp_tel"/>
+		<result property="expCompany" column="exp_company"/>
+		<result property="expAddress" column="exp_address"/>
+		<result property="expEmail" column="exp_email"/>
+		<result property="expExsit" column="exp_exsit"/>
+	</resultMap>
+	<select id="findAllByPage" resultMap="ExpertMap">
+		SELECT exp_id,exp_name,exp_company,exp_special,exp_office,exp_tel FROM t_expert as e 
+		WHERE exp_name LIKE "%"#{expName}"%" and exp_special like "%"#{expSpecial}"%" 
+		AND exp_company like "%"#{expCompany}"%" AND exp_exsit=0 
+		LIMIT #{start},#{pageSize}
+	</select>
+	<select id="findById" parameterType="int" resultMap="ExpertMap">
+		SELECT e.* FROM t_expert as e WHERE exp_id=#{id} LIMIT 1
+	</select>
+	<select id="findAll" parameterType="String" resultMap="ExpertMap">
+		SELECT exp_id,exp_name FROM t_expert WHERE exp_special=#{special} AND exp_exsit=0
+	</select>
+	<select id="findCount" resultType="int">
+		SELECT COUNT(0) FROM t_expert WHERE exp_name LIKE "%"#{expName}"%" and exp_special like "%"#{expSpecial}"%" 
+		AND exp_company like "%"#{expCompany}"%" AND exp_exsit=0
+	</select>
+	<insert id="add" parameterType="ExpertBean">
+		INSERT INTO t_expert VALUES(null,#{expName},#{expGender},#{expBirth},#{expPic},#{expSpecial},#{expOffice},#{expTel},
+		#{expCompany},#{expAddress},#{expEmail},0);
+	</insert>
+	<update id="update" parameterType="ExpertBean">
+		update t_expert set exp_office=#{expOffice},exp_tel=#{expTel},exp_company=#{expCompany},exp_email=#{expEmail} WHERE exp_id=#{expId}
+	</update>
+	<update id="updateExsit" parameterType="int">
+		update t_expert set exp_exsit=1 WHERE exp_id=#{id}
+	</update>
+</mapper>

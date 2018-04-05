@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.project.dao.IInsectDao">
+  <insert id="addInsect" parameterType="InsectBean">
+  INSERT INTO t_insect (ins_id,ins_name,ins_master,ins_breed,ins_enemy,ins_child_pic,ins_old_pic,ins_cure,ins_harm)VALUES 
+  (null,#{insName},#{insMaster},#{insBreed},#{insEnemy},#{insChildPic},#{insOldPic},#{insCure},#{insHarm});
+  </insert>
+  
+  <select id="findInsectById" parameterType="int" resultMap="Insectmap">
+  SELECT ins_id,ins_name,ins_master,ins_breed,ins_enemy,ins_child_pic,ins_old_pic,ins_cure,ins_harm FROM t_insect  
+  WHERE ins_id=#{insId};
+  </select>
+  <select id="findPageBean" parameterType="hashmap" resultMap="Insectmap">
+    select ins_id,ins_name,ins_master,ins_harm from t_insect where ins_name like "%"#{insName}"%" and
+    ins_master like "%"#{insMaster}"%" limit #{pageNo},#{pageSize};
+  </select>
+  <select id="findCount" parameterType="hashmap" resultType="int">
+    SELECT COUNT(0) FROM t_insect where ins_name like "%"#{insName}"%" and
+    ins_master like "%"#{insMaster}"%"
+  </select>
+  <resultMap type="InsectBean" id="Insectmap">
+	  <id property="insId" column="ins_id"/>
+	  <result property="insName" column="ins_name"/>
+	  <result property="insMaster" column="ins_master"/>
+	  <result property="insBreed" column="ins_breed"/>
+	  <result property="insEnemy" column="ins_enemy"/>
+	  <result property="insChildPic" column="ins_child_pic"/>
+	  <result property="insOldPic" column="ins_old_pic"/>
+	  <result property="insCure" column="ins_cure"/>
+	  <result property="insHarm" column="ins_harm"/>
+  </resultMap>
+</mapper> 

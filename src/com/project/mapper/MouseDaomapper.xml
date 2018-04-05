@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.project.dao.IMouseDao">
+  <insert id="addMouse" parameterType="MouseBean">
+  INSERT INTO t_Mouse (mou_id,mou_name,mou_food,mou_breed,mou_enemy,mou_pic,mou_cure,mou_harm)VALUES 
+  (null,#{mouName},#{mouFood},#{mouBreed},#{mouEnemy},#{mouPic},#{mouCure},#{mouHarm});
+  </insert>
+  
+   <select id="findMouseById" parameterType="int" resultMap="Mousemap">
+  SELECT mou_id,mou_name,mou_food,mou_breed,mou_enemy,mou_pic,mou_cure,mou_harm FROM t_mouse  
+  WHERE mou_id=#{mouId};
+  </select>
+   <select id="findCount" parameterType="hashmap" resultType="int">
+    SELECT COUNT(0) FROM t_mouse where mou_name like "%"#{mouName}"%"
+  </select>
+  <resultMap type="MouseBean" id="Mousemap">
+	  <id property="mouId" column="mou_id"/>
+	  <result property="mouName" column="mou_name"/>
+	  <result property="mouFood" column="mou_food"/>
+	  <result property="mouBreed" column="mou_breed"/>
+	  <result property="mouEnemy" column="mou_enemy"/>
+	  <result property="mouPic" column="mou_pic"/>
+	  <result property="mouCure" column="mou_cure"/>
+	  <result property="mouHarm" column="mou_harm"/>
+  </resultMap>
+  <select id="findPageBean" parameterType="hashmap" resultMap="Mousemap">
+    select mou_id,mou_name,mou_food,mou_harm from t_mouse where mou_name like "%"#{mouName}"%"
+    limit #{pageNo},#{pageSize};
+  </select>
+</mapper>

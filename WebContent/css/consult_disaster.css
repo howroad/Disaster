@@ -1,0 +1,30 @@
+@font-face {
+    font-family: 'Microsoft Yahei';
+    src: url("../fonts/msyh.ttc");
+}
+#incident_record{
+    font-family: 'Microsoft Yahei';
+    font-size: 24px;
+    text-align: center;
+}
+.table-bordered th{
+    background-color: #cccccc;
+}
+.table-bordered td{
+    height: 36.8px;
+}
+#consult_disaster{
+    position: relative;
+    left: 50%;
+}
+#sel1,#sel2{
+    width: 80px;
+    height: 100px;
+}
+#btns{
+    width: 50px;
+    display: inline-block;
+}
+#btn5{
+    width: 110px;
+}

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.dao.IDisasterLogDao">
+
+	<select id="findList" parameterType="hashMap" resultMap="DisasterLogMap">
+		SELECT dlog_id,dlog_name,dlog_date,dlog_area_id,area_name,dlog_plan,dlog_stage
+		FROM t_disaster_log LEFT JOIN t_area ON dlog_area_id = area_id
+		<where>
+		<if test="dlogName!=null and dlogName!=''">
+			dlog_name LIKE "%"#{dlogName}"%"
+		</if>
+		<if test="dlogStage!=null and dlogStage!=0">
+			and dlog_stage = #{dlogStage}
+		</if>
+		<if test="areaName!=null and areaName!=''">
+			and area_name LIKE "%"#{areaName}"%"
+		</if>
+		<if test="startDate!=null and startDate!=''">
+			and dlog_date &gt; #{startDate}
+		</if>
+		<if test="endDate!=null and endDate!=''">
+			and dlog_date &lt; #{endDate}
+		</if>
+		</where>
+		LIMIT #{start},#{size}
+	</select>
+	
+	<select id="countList" parameterType="hashMap" resultType="int">
+		SELECT COUNT(dlog_id)
+		FROM t_disaster_log LEFT JOIN t_area ON dlog_area_id = area_id
+		<where>
+		<if test="dlogName!=null and dlogName!=''">
+			dlog_name LIKE "%"#{dlogName}"%"
+		</if>
+		<if test="dlogStage!=null and dlogStage!=0">
+			and dlog_stage = #{dlogStage}
+		</if>
+		<if test="areaName!=null and areaName!=''">
+			and area_name LIKE "%"#{areaName}"%"
+		</if>
+		<if test="startDate!=null and startDate!=''">
+			and dlog_date &gt; #{startDate}
+		</if>
+		<if test="endDate!=null and endDate!=''">
+			and dlog_date &lt; #{endDate}
+		</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="DisasterLogBean">
+		INSERT INTO t_disaster_log(dlog_name,dlog_pic,dlog_date,dlog_type,dlog_stage,dlog_desc,dlog_found,dlog_loss,dlog_influence,dlog_plan,dlog_area_id)
+		VALUES(#{dlogName},#{dlogPic},#{dlogDate},#{dlogType},#{dlogStage},#{dlogDesc},#{dlogFound},#{dlogLoss},#{dlogInfluence},#{dlogPlan},#{dlogArea.areaId})
+	</insert>
+	
+	<select id="findDlogById" parameterType="int" resultMap="DisasterLogMap">
+		SELECT dlog_id,dlog_name,dlog_pic,dlog_date,dlog_type,dlog_stage,dlog_desc,dlog_found,dlog_loss,dlog_influence,dlog_plan,dlog_area_id
+		FROM t_disaster_log LEFT JOIN t_area ON dlog_area_id = area_id
+		WHERE dlog_id = #{dlogId}
+		LIMIT 1
+	</select>
+	
+	<update id="updateDlogStage" parameterType="DisasterLogBean">
+		UPDATE t_disaster_log SET dlog_stage = 3 
+		WHERE dlog_id = #{dlogId}
+	</update>
+	
+	<update id="update" parameterType="DisasterLogBean">
+		UPDATE t_disaster_log SET dlog_stage = #{dlogStage},dlog_plan = #{dlogPlan} 
+		WHERE dlog_id = #{dlogId}	
+	</update>
+	
+	<resultMap type="DisasterLogBean" id="DisasterLogMap">
+		<id property="dlogId" column="dlog_id"></id>
+		<result property="dlogName" column="dlog_name"></result>
+		<result property="dlogPic" column="dlog_pic"></result>
+		<result property="dlogDate" column="dlog_date"></result>
+		<result property="dlogType" column="dlog_type"></result>
+		<result property="dlogStage" column="dlog_stage"></result>
+		<result property="dlogDesc" column="dlog_desc"></result>
+		<result property="dlogFound" column="dlog_found"></result>
+		<result property="dlogLoss" column="dlog_loss"></result>
+		<result property="dlogInfluence" column="dlog_influence"></result>
+		<result property="dlogPlan" column="dlog_plan"></result>
+		<association property="dlogArea" javaType="AreaBean" column="dlog_area_id" select="com.project.dao.IAreaDao.findAreaById"></association>
+		<collection property="clogList" column="dlog_id" ofType="ConsultationLogBean" select="findClogByDlogId"></collection>
+	</resultMap>
+	
+	<select id="findClogByDlogId" parameterType="int" resultType="ConsultationLogBean">
+		SELECT clog_id as clogId,clog_date as clogDate,GROUP_CONCAT(exp_name) as expNames,clog_result as clogResult
+		FROM t_consultation_log LEFT JOIN t_consultation_detal ON clog_id = cdtl_clog_id
+		LEFT JOIN t_expert ON exp_id = cdtl_exp_id
+		WHERE clog_dlog_id = #{dlogId}
+		GROUP BY(clog_id)
+	</select>
+</mapper>
